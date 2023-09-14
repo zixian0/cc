@@ -37,7 +37,7 @@ def companyLogin():
     
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
-
+    cursor.close()
     if companyEmail == "" and companyPassword == "":
         return render_template('CompanyLogin.html', empty_field=True)
 
@@ -65,13 +65,7 @@ def companyLogin():
             if response == None:
                 return render_template('CompanyPage.html', company = companyRecord)
             else:
-                return render_template('CompanyPage.html', company = companyRecord, url = url)
-
-    except Exception as e:
-        return str(e)
-
-    finally:
-        cursor.close()
+                return render_template('CompanyPage.html', company = companyRecord, url = url)        
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
