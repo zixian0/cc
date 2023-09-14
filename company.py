@@ -28,9 +28,88 @@ def home():
     return render_template('AdminLogin.html')
 
 
-@app.route("/companyLogin")
+@app.route("/companyLogin", methods=['GET', 'POST'])
 def companyLogin():
-    return render_template('CompanyLogin.html') 
+    companyEmail = request.form['companyEmail']
+    companyPassword = request.form['companyPassword']
+    company_filename_in_s3 = str(companyEmail) + "_file.pdf"
+    expiration = 3600
+    
+    fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
+    cursor = db_conn.cursor()
+
+    if companyEmail == "" and companyPassword == "":
+        return render_template('CompanyLogin.html', empty_field=True)
+
+    try:
+        cursor.execute(fetch_company_sql, (companyEmail))
+        companyRecord = cursor.fetchone()
+
+        if companyRecords == None:
+            return render_template('CompanyLogin.html', no_record=True)
+
+        if companyRecords[8] == "Pending Approval" or companyRecords[8] == "Rejected":
+            return render_template('CompanyLogin.html', not_Approved=True)
+
+        if companyRecords[7] != companyPassword:
+            return render_template('CompanyLogin.html', login_failed=True)
+        else:
+            try:
+                response = s3.generate_presigned_url('get_object',
+                                                    Params={'Bucket': custombucket,
+                                                            'Key': object_key},
+                                                    ExpiresIn=expiration)
+            except ClientError as e:
+                logging.error(e)
+
+            if response == None:
+                return render_template('CompanyPage.html', company = companyRecord)
+            else:
+                return render_template('CompanyPage.html', company = companyRecord, url = url)
+
+    except Exception as e:
+        return str(e)
+
+    finally:
+        cursor.close()
+
+@app.route("/companyUpload", methods=['POST'])
+def companyUpload():
+    companyFile = request.files['companyFile']
+    companyEmail = request.args.get('companyEmail')
+
+    if companyFile.filename == "":
+        return render_template('CompanyPage.html', no_file=True)
+    
+    fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
+    cursor = db_conn.cursor()
+    company_filename_in_s3 = str(companyEmail) + "_file.pdf"
+    s3 = boto3.resource('s3')
+
+    try:
+        cursor.execute(fetch_company_sql, (companyEmail))
+        companyRecord = cursor.fetchone()
+        s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=companyFile)
+        bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+        s3_location = (bucket_location['LocationConstraint'])
+
+        if s3_location is None:
+            s3_location = ''
+        else:
+            s3_location = '-' + s3_location
+
+        object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+            s3_location,
+            custombucket,
+            company_filename_in_s3)
+
+    except Exception as e:
+        return str(e)
+
+    finally:
+        cursor.close()
+    
+    return render_template('CompanyPage.html', company = companyRecord)
 
 
 @app.route("/companyReg", methods=['POST'])
@@ -45,11 +124,8 @@ def companyReg():
     companyPassword = request.form['companyPassword']
     status = "Pending Approval"
 
-   
     insert_sql = "INSERT INTO company VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     cursor = db_conn.cursor()
-
-     
 
     try:
 
