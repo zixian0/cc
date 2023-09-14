@@ -37,7 +37,7 @@ def companyLogin():
     
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
-    cursor.close()
+
     if companyEmail == "" and companyPassword == "":
         return render_template('CompanyLogin.html', empty_field=True)
 
