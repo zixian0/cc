@@ -45,9 +45,8 @@ def companyLogin():
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
 
-        if companyRecord is None:
-            return render_template('CompanyLogin.html', no_record=True)
-        elif companyRecord[8] == "Pending Approval" or companyRecord[8] == "Rejected":
+        
+        if companyRecord[8] == "Pending Approval" or companyRecord[8] == "Rejected":
             return render_template('CompanyLogin.html', not_Approved=True)
         elif companyRecord[7] != companyPassword:
             return render_template('CompanyLogin.html', login_failed=True)
