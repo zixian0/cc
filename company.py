@@ -25,7 +25,7 @@ table = 'company'
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template('AdminLogin.html')
+    return render_template('CompanyLogin.html')
 
 
 @app.route("/companyLogin", methods=['GET', 'POST'])
