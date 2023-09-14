@@ -65,7 +65,9 @@ def companyLogin():
             if response == None:
                 return render_template('CompanyPage.html', company = companyRecord)
             else:
-                return render_template('CompanyPage.html', company = companyRecord, url = url)        
+                return render_template('CompanyPage.html', company = companyRecord, url = url)     
+    except Exception as e:
+        return str(e)
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
