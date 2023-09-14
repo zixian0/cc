@@ -47,9 +47,9 @@ def companyLogin():
 
         if companyRecord == None:
             return render_template('CompanyLogin.html', no_record=True)
-        else if companyRecord[8] == "Pending Approval" or companyRecord[8] == "Rejected":
+        elif companyRecord[8] == "Pending Approval" or companyRecord[8] == "Rejected":
             return render_template('CompanyLogin.html', not_Approved=True)
-        else if companyRecord[7] != companyPassword:
+        elif companyRecord[7] != companyPassword:
             return render_template('CompanyLogin.html', login_failed=True)
         else:
             try:
