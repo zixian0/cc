@@ -69,6 +69,9 @@ def companyLogin():
     except Exception as e:
         return str(e)
 
+    finally:
+        cursor.close()
+
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
     companyFile = request.files['companyFile']
