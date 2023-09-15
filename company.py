@@ -91,7 +91,7 @@ def companyUpload():
                                                 Params={'Bucket': custombucket,
                                                         'Key': company_filename_in_s3},
                                                 ExpiresIn=expiration)
-        except ClienError as e:
+        except ClientError as e:
             logging.error(e)
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
