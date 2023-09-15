@@ -74,7 +74,7 @@ def companyLogin():
     finally:
         cursor.close()
 
-@app.route("/companyUpload", methods=['POST'])
+@app.route("/companyUpload", methods=['GET', 'POST'])
 def companyUpload():
     companyEmail = request.args.get('companyEmail')
     
@@ -118,7 +118,7 @@ def companyUpload():
     return render_template('CompanyPage.html', company=companyRecord)
 
 
-@app.route("/companyReg", methods=['GET', 'POST'])
+@app.route("/companyReg", methods=['POST'])
 def companyReg():
     companyName = request.form['companyName']
     companyEmail = request.form['companyEmail']
