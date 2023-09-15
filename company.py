@@ -77,10 +77,7 @@ def companyLogin():
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
     companyEmail = request.args.get('companyEmail')
-    company_File = request.files['company_File']
-
-    if company_File.filename == "":
-        return render_template('CompanyPage.html', no_file_uploaded=True)
+    
     
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
@@ -89,21 +86,28 @@ def companyUpload():
     try:
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
-        company_filename_in_s3 = str(companyEmail) + "_file.pdf"
-        s3 = boto3.resource('s3')
-        s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
-        bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
-        s3_location = (bucket_location['LocationConstraint'])
 
-        if s3_location is None:
-            s3_location = ''
-        else:
-            s3_location = '-' + s3_location
+        if request.method == "POST":
+            company_File = request.files['company_File']
 
-        object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
-            s3_location,
-            custombucket,
-            company_filename_in_s3)
+            if company_File.filename == "":
+                return render_template('CompanyPage.html', no_file_uploaded=True)
+            company_filename_in_s3 = str(companyEmail) + "_file.pdf"
+            
+            s3 = boto3.resource('s3')
+            s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
+            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+            s3_location = (bucket_location['LocationConstraint'])
+
+            if s3_location is None:
+                s3_location = ''
+            else:
+                s3_location = '-' + s3_location
+
+            object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+                s3_location,
+                custombucket,
+                company_filename_in_s3)
 
     except Exception as e:
         return str(e)
