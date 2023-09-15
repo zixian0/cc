@@ -76,11 +76,10 @@ def companyLogin():
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
-    companyEmail = request.form['companyEmail']
+    companyEmail = request.args.get('companyEmail')
     company_File = request.files['company_File']
 
-    if company_File.filename == "":
-        return render_template('CompanyPage.html', no_file_uploaded=True)
+    
     
     company_filename_in_s3 = str(companyEmail) + "_file.pdf"
     
@@ -92,6 +91,8 @@ def companyUpload():
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
         
+        if company_File.filename == "":
+            return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
         s3 = boto3.resource('s3')
         s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
         bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
