@@ -98,7 +98,7 @@ def companyUpload():
 
         if company_File.filename == "":
             if response is None:
-                return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True, , file_exist = False)
+                return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True, file_exist = False)
             else:
                 return render_template('CompanyPage.html', company=companyRecord, file_exist = True, url = response, no_file_uploaded=True)
         else:
