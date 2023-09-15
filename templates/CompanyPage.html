@@ -186,13 +186,13 @@
             </tr>
             <tr style="height: 64px;">
               <td class="u-align-right u-table-cell u-table-cell-17">Relevant Document</td>
-              {% if file_exist == True %}
               <td class="u-align-right u-table-cell u-table-cell-17">
+	      {% if file_exist %}
                 <a href="{{ url }}"
                   class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">
                   Download </a>
+	      {% endif %}
               </td>
-              {% endif %}
             </tr>
             <tr style="height: 64px;">
               <td class="u-align-right u-table-cell u-table-cell-15"> </td>
