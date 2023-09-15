@@ -84,16 +84,15 @@ def companyUpload():
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
     
-    expiration = 3600
     try:
-        response = s3.generate_presigned_url('get_object',
-                                            Params={'Bucket': custombucket,
-                                                    'Key': company_filename_in_s3},
-                                            ExpiresIn=expiration)
-    except ClienError as e:
-        logging.error(e)
-
-    try:
+        expiration = 3600
+        try:
+            response = s3.generate_presigned_url('get_object',
+                                                Params={'Bucket': custombucket,
+                                                        'Key': company_filename_in_s3},
+                                                ExpiresIn=expiration)
+        except ClienError as e:
+            logging.error(e)
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
 
