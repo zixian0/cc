@@ -64,7 +64,7 @@ def companyLogin():
                 logging.error(e)
 
             if response is None:
-                return render_template('CompanyPage.html', company = companyRecord)
+                return render_template('CompanyPage.html', company = companyRecord, no_file = True)
             else:
                 return render_template('CompanyPage.html', company = companyRecord, url = response)
 
@@ -74,22 +74,23 @@ def companyLogin():
     finally:
         cursor.close()
 
-@app.route("/companyUpload", methods=['POST'])
+@app.route("/companyUpload", methods=['GET', 'POST'])
 def companyUpload():
     companyFile = request.files['companyFile']
     companyEmail = request.args.get('companyEmail')
 
     if companyFile.filename == "":
-        return render_template('CompanyPage.html', no_file=True)
+        return render_template('CompanyPage.html', no_file_uploaded=True)
     
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
-    company_filename_in_s3 = str(companyEmail) + "_file.pdf"
-    s3 = boto3.resource('s3')
+    
 
     try:
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
+        company_filename_in_s3 = str(companyEmail) + "_file.pdf"
+        s3 = boto3.resource('s3')
         s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=companyFile)
         bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
         s3_location = (bucket_location['LocationConstraint'])
