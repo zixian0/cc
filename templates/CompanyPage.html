@@ -36,6 +36,11 @@
 </head>
 
 <body class="u-body u-xl-mode" data-lang="en">
+  {% if no_file_uploaded %}
+  <script>
+    alert("No file selected. Please try again.");
+  </script>
+  {% endif %}
   <header class="u-black u-clearfix u-header u-header" id="sec-519f">
     <div class="u-clearfix u-sheet u-sheet-1">
       <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1">
@@ -181,16 +186,25 @@
             </tr>
             <tr style="height: 64px;">
               <td class="u-align-right u-table-cell u-table-cell-17">Relevant Document</td>
-              <td class="u-align-right u-table-cell u-table-cell-17"><a href="{{ url }}"
+              {% if no_file %}
+              <td class="u-align-right u-table-cell u-table-cell-17">
+                <a href="{{ url }}"
                   class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">
-                  Download </a><input type=file name="companyFile" style="height:25px;font-size:14pt;color:grey;"></td>
+                  Download </a>
+              </td>
+              {% endif %}
+            </tr>
+            <tr style="height: 64px;">
+              <td class="u-align-right u-table-cell u-table-cell-17"><input type=file name="companyFile"
+                  style="height:25px;font-size:14pt;color:grey;"><a href="/companyUpload?companyEmail={{ company[1] }}"
+                  class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">Upload</a>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <a href="/companyUpload?companyEmail={{ company[1] }}"
-        class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">Upload</a>
+
     </div>
   </section>
 
