@@ -76,7 +76,7 @@ def companyLogin():
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
-    companyEmail = request.args.get('companyEmail')
+    companyEmail = request.form('companyEmail')
     company_File = request.files['company_File']
 
     if company_File.filename == "":
