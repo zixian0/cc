@@ -76,20 +76,20 @@ def companyLogin():
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
-    companyName = request.args.get('companyName')
+    companyEmail = request.args.get('companyEmail')
     company_File = request.files['company_File']
 
     if company_File.filename == "":
         return render_template('CompanyPage.html', no_file_uploaded=True)
     
-    fetch_company_sql = "SELECT * FROM company WHERE companyName = %s"
+    fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
     
 
     try:
-        cursor.execute(fetch_company_sql, (companyName))
+        cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
-        company_filename_in_s3 = str(companyName) + "_file.pdf"
+        company_filename_in_s3 = str(companyEmail) + "_file.pdf"
         s3 = boto3.resource('s3')
         s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
         bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
