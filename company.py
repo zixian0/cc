@@ -98,7 +98,7 @@ def companyUpload():
 
         if company_File.filename == "":
             if response is None:
-                return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
+                return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True, , file_exist = False)
             else:
                 return render_template('CompanyPage.html', company=companyRecord, file_exist = True, url = response, no_file_uploaded=True)
         else:
@@ -125,7 +125,7 @@ def companyUpload():
             except ClientError as e:
                 logging.error(e)
 
-            if response == "":
+            if response is None:
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = False)
             else:
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
