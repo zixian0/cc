@@ -118,7 +118,7 @@ def companyUpload():
     return render_template('CompanyPage.html', company=companyRecord)
 
 
-@app.route("/companyReg", methods=['POST'])
+@app.route("/companyReg", methods=['GET', 'POST'])
 def companyReg():
     companyName = request.form['companyName']
     companyEmail = request.form['companyEmail']
