@@ -198,6 +198,7 @@
               <td class="u-align-right u-table-cell u-table-cell-15"> </td>
               <td class="u-align-right u-table-cell u-table-cell-17">
 	      <form action="/companyUpload" method = "POST">
+	      	<input type="text" name="companyEmail" value="{{company[1]}}" style="display:none">
                 <input type=file name="company_File" style="height:25px;font-size:14pt;color:grey;">
                 <input type="submit" value="Upload">
 	      </form>
@@ -205,10 +206,6 @@
             </tr>
           </tbody>
         </table>
-
-        <form style="display:none">
-          <input type="text" name="companyEmail" value="{{company[1]}}">
-        </form>
       </div>
 
 
