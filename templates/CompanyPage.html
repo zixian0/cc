@@ -197,7 +197,7 @@
             <tr style="height: 64px;">
               <td class="u-align-right u-table-cell u-table-cell-15"> </td>
               <td class="u-align-right u-table-cell u-table-cell-17">
-	      <form action="/companyUpload" method = "POST">
+	      <form action="/companyUpload" method = "POST" enctype="multipart/form-data">
 	      	<input type="text" name="companyEmail" value="{{company[1]}}" style="display:none">
                 <input type=file name="company_File" style="height:25px;font-size:14pt;color:grey;">
                 <input type="submit" value="Upload">
