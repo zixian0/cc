@@ -7,8 +7,8 @@
   <meta name="keywords" content="Student Signup">
   <meta name="description" content="">
   <title>CompanyLogin</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='CompanyLogin.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CompanyLogin.css')}}">
 
   <meta name="generator" content="Nicepage 5.17.1, nicepage.com">
   <meta name="referrer" content="origin">
@@ -173,6 +173,7 @@
   <section class="u-clearfix u-section-2" id="sec-3924">
     <div class="u-clearfix u-sheet u-sheet-1">
       <div class="u-form u-form-1">
+
         <form action="/companyLogin" method="post" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form"
           source="email" name="form" style="padding: 10px;">
           <div class="u-form-group u-form-name u-label-left">
@@ -186,17 +187,20 @@
               class="u-input u-input-rectangle u-input-2" required="">
           </div>
           <div class="u-form-group u-form-submit u-label-left">
-            <label class="u-label u-label-3"></label>
+            <!-- <label class="u-label u-label-3"></label> -->
             <input type="submit" value="Login">
             <div class="u-align-left u-btn-submit-container">
             </div>
           </div>
       </div>
-      </form>
+
+      <<!-- input type="hidden" value="" name="recaptchaResponse">
+        <input type="hidden" name="formServices" value=""> -->
+        </form>
     </div>
-    <a href="CompanyRegister.html"
+    <!-- <a href="CompanyRegister.html"
       class="u-active-none u-border-2 u-border-active-palette-2-dark-1 u-border-hover-palette-2-base u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-btn u-button-style u-hover-none u-none u-text-hover-palette-2-base u-text-palette-1-base u-btn-2">Sign
-      Up</a>
+      Up</a> -->
     </div>
   </section>
   <section class="u-clearfix u-section-3" id="sec-fc59">

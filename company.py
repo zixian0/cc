@@ -19,6 +19,7 @@ db_conn = connections.Connection(
 )
 output = {}
 table = 'company'
+s3=boto3.client('s3')
 
 
 #if call / then will redirect to that pg
@@ -28,7 +29,7 @@ def home():
     return render_template('CompanyLogin.html')
 
 
-@app.route("/companyLogin", methods=['GET', 'POST'])
+@app.route("/companyLogin", methods=['GET','POST'])
 def companyLogin():
     companyEmail = request.form['companyEmail']
     companyPassword = request.form['companyPassword']
@@ -43,26 +44,30 @@ def companyLogin():
 
     try:
         cursor.execute(fetch_company_sql, (companyEmail))
-        companyRecord = cursor.fetchall()
+        companyRecord = cursor.fetchone()
 
-        
-        if companyRecord[0][8] == "Pending Approval" or companyRecord[8] == "Rejected":
+        if not companyRecord:
+            return render_template('CompanyLogin.html', no_record=True)
+
+        if companyRecord[8] != "Approved":
             return render_template('CompanyLogin.html', not_Approved=True)
-        elif companyRecord[0][7] != companyPassword:
+
+        if companyRecord[7] != companyPassword:
             return render_template('CompanyLogin.html', login_failed=True)
         else:
             try:
                 response = s3.generate_presigned_url('get_object',
                                                     Params={'Bucket': custombucket,
-                                                            'Key': object_key},
+                                                            'Key': company_filename_in_s3},
                                                     ExpiresIn=expiration)
             except ClientError as e:
                 logging.error(e)
 
-            if response == None:
-                return render_template('CompanyPage.html', company = companyRecord[0])
+            if response is None:
+                return render_template('CompanyPage.html', company = companyRecord)
             else:
-                return render_template('CompanyPage.html', company = companyRecord[0], url = url)     
+                return render_template('CompanyPage.html', company = companyRecord, url = response)
+
     except Exception as e:
         return str(e)
 
@@ -105,7 +110,7 @@ def companyUpload():
     finally:
         cursor.close()
     
-    return render_template('CompanyPage.html', company = companyRecord)
+    return render_template('CompanyPage.html', company=companyRecord)
 
 
 @app.route("/companyReg", methods=['POST'])
@@ -147,7 +152,6 @@ def adminLogin():
     status = "Pending Approval"
 
 
-    
     fetch_admin_sql = "SELECT * FROM admin WHERE adminEmail = %s"
     fetch_company_sql = "SELECT * FROM company WHERE status = %s"
     cursor = db_conn.cursor()
@@ -172,8 +176,6 @@ def adminLogin():
 
     finally:
         cursor.close()
-
-    
 
 
 if __name__ == '__main__':

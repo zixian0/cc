@@ -7,10 +7,14 @@
   <meta name="keywords" content="Welcome : Marcus Baker">
   <meta name="description" content="">
   <title>CompanyPage</title>
-  <link rel="stylesheet" href="nicepage.css" media="screen">
-  <link rel="stylesheet" href="CompanyPage.css" media="screen">
-  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-  <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+  <!-- <link rel="stylesheet" href="nicepage.css" media="screen"> -->
+  <!-- <link rel="stylesheet" href="CompanyPage.css" media="screen"> -->
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CompanyPage.css') }}">
+
+  <!-- <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script> -->
+  <!-- <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script> -->
   <meta name="generator" content="Nicepage 5.17.1, nicepage.com">
   <link id="u-theme-google-font" rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
@@ -177,13 +181,14 @@
             </tr>
             <tr style="height: 64px;">
               <td class="u-align-right u-table-cell u-table-cell-17">Relevant Document</td>
+              <td class="u-align-right u-table-cell u-table-cell-17"><a href="{{ url }}"
+                  class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">
+                  Download </a><input type=file name="companyFile" style="height:25px;font-size:14pt;color:grey;"></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <a href="{{ url }}"
-        class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">
-        Download </a>
+
       <a href="/companyUpload?companyEmail={{ company[1] }}"
         class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">Upload</a>
     </div>
