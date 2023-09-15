@@ -80,7 +80,7 @@ def companyUpload():
     companyEmail = request.form['companyEmail']
     company_File = request.files['company_File']
     company_filename_in_s3 = str(companyEmail) + "_file.pdf"
-    
+    s3 = boto3.resource('s3')
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
     
@@ -102,7 +102,7 @@ def companyUpload():
                 return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
             else:
                 return render_template('CompanyPage.html', company=companyRecord, file_exist = True, url = response, no_file_uploaded=True)
-        s3 = boto3.resource('s3')
+        
         s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
         bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
         s3_location = (bucket_location['LocationConstraint'])
