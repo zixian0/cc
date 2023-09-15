@@ -76,11 +76,8 @@ def companyLogin():
 
 @app.route("/companyUpload", methods=['POST'])
 def companyUpload():
-    companyEmail = request.args.get('companyEmail')
+    companyEmail = request.form['companyEmail']
     company_File = request.files['company_File']
-
-    
-    
     company_filename_in_s3 = str(companyEmail) + "_file.pdf"
     
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
