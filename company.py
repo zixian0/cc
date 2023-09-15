@@ -125,7 +125,7 @@ def companyUpload():
             except ClientError as e:
                 logging.error(e)
 
-            if response is None:
+            if response == "":
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = False)
             else:
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
