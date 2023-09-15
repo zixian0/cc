@@ -65,7 +65,7 @@ def companyLogin():
                 logging.error(e)
 
             if response is None:
-                return render_template('CompanyPage.html', company = companyRecord)
+                return render_template('CompanyPage.html', company = companyRecord, file_exist = False)
             else:
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
 
@@ -126,7 +126,7 @@ def companyUpload():
                 logging.error(e)
 
             if response is None:
-                return render_template('CompanyPage.html', company = companyRecord)
+                return render_template('CompanyPage.html', company = companyRecord, file_exist = False)
             else:
                 return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
         
