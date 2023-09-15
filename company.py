@@ -74,7 +74,7 @@ def companyLogin():
     finally:
         cursor.close()
 
-@app.route("/companyUpload", methods=['GET', 'POST'])
+@app.route("/companyUpload", methods=['POST'])
 def companyUpload():
     companyName = request.args.get('companyName')
     company_File = request.files['company_File']
