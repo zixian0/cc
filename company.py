@@ -2,8 +2,8 @@ from flask import Flask, render_template, request
 from pymysql import connections
 import os
 import boto3
-from botocore.exceptions import ClientError
 from config import *
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 
@@ -80,7 +80,7 @@ def companyUpload():
     companyEmail = request.form['companyEmail']
     company_File = request.files['company_File']
     company_filename_in_s3 = str(companyEmail) + "_file.pdf"
-    s3 = boto3.resource('s3')
+    
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
     
@@ -90,7 +90,7 @@ def companyUpload():
                                             Params={'Bucket': custombucket,
                                                     'Key': company_filename_in_s3},
                                             ExpiresIn=expiration)
-    except ClientError as e:
+    except ClienError as e:
         logging.error(e)
 
     try:
@@ -102,34 +102,26 @@ def companyUpload():
                 return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
             else:
                 return render_template('CompanyPage.html', company=companyRecord, file_exist = True, url = response, no_file_uploaded=True)
-        
-        s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
-        bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
-        s3_location = (bucket_location['LocationConstraint'])
-
-        if s3_location is None:
-            s3_location = ''
         else:
-            s3_location = '-' + s3_location
+            s3 = boto3.resource('s3')
+            s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
+            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+            s3_location = (bucket_location['LocationConstraint'])
 
-        object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
-            s3_location,
-            custombucket,
-            company_filename_in_s3)
-        
-        try:
-            response = s3.generate_presigned_url('get_object',
-                                                Params={'Bucket': custombucket,
-                                                        'Key': company_filename_in_s3},
-                                                ExpiresIn=expiration)
-        except ClientError as e:
-            logging.error(e)
-        
+            if s3_location is None:
+                s3_location = ''
+            else:
+                s3_location = '-' + s3_location
 
-        if response is None:
-            return render_template('CompanyPage.html', company = companyRecord)
-        else:
-            return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
+            object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+                s3_location,
+                custombucket,
+                company_filename_in_s3)
+        
+            if response is None:
+                return render_template('CompanyPage.html', company = companyRecord)
+            else:
+                return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = object_url)
         
     except Exception as e:
         return str(e)
