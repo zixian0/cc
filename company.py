@@ -64,9 +64,9 @@ def companyLogin():
                 logging.error(e)
 
             if response is None:
-                return render_template('CompanyPage.html', company = companyRecord, no_file = True)
+                return render_template('CompanyPage.html', company = companyRecord)
             else:
-                return render_template('CompanyPage.html', company = companyRecord, url = response)
+                return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
 
     except Exception as e:
         return str(e)
@@ -87,7 +87,7 @@ def companyUpload():
     try:
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
-        
+
         if company_File.filename == "":
             return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
         s3 = boto3.resource('s3')
@@ -104,14 +104,28 @@ def companyUpload():
             s3_location,
             custombucket,
             company_filename_in_s3)
+        
+        expiration = 3600
+        try:
+            response = s3.generate_presigned_url('get_object',
+                                                Params={'Bucket': custombucket,
+                                                        'Key': company_filename_in_s3},
+                                                ExpiresIn=expiration)
+        except ClientError as e:
+            logging.error(e)
 
+        if response is None:
+            return render_template('CompanyPage.html', company = companyRecord)
+        else:
+            return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
+        
     except Exception as e:
         return str(e)
 
     finally:
         cursor.close()
     
-    return render_template('CompanyPage.html', company=companyRecord)
+    #return render_template('CompanyPage.html', company=companyRecord)
 
 
 @app.route("/companyReg", methods=['POST'])
