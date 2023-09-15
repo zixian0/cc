@@ -116,11 +116,19 @@ def companyUpload():
                 upload_location,
                 custombucket,
                 company_filename_in_s3)
-        
+
+            try:
+                response = s3.generate_presigned_url('get_object',
+                                                    Params={'Bucket': custombucket,
+                                                            'Key': company_filename_in_s3},
+                                                    ExpiresIn=expiration)
+            except ClientError as e:
+                logging.error(e)
+
             if response is None:
                 return render_template('CompanyPage.html', company = companyRecord)
             else:
-                return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = object_url)
+                return render_template('CompanyPage.html', company = companyRecord, file_exist = True, url = response)
         
     except Exception as e:
         return str(e)
