@@ -83,13 +83,24 @@ def companyUpload():
     fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
     cursor = db_conn.cursor()
     
+    expiration = 3600
+    try:
+        response = s3.generate_presigned_url('get_object',
+                                            Params={'Bucket': custombucket,
+                                                    'Key': company_filename_in_s3},
+                                            ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
 
     try:
         cursor.execute(fetch_company_sql, (companyEmail))
         companyRecord = cursor.fetchone()
 
         if company_File.filename == "":
-            return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
+            if response is None:
+                return render_template('CompanyPage.html', company=companyRecord, no_file_uploaded=True)
+            else:
+                return render_template('CompanyPage.html', company=companyRecord, file_exist = True, url = response, no_file_uploaded=True)
         s3 = boto3.resource('s3')
         s3.Bucket(custombucket).put_object(Key=company_filename_in_s3, Body=company_File)
         bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
@@ -105,7 +116,6 @@ def companyUpload():
             custombucket,
             company_filename_in_s3)
         
-        expiration = 3600
         try:
             response = s3.generate_presigned_url('get_object',
                                                 Params={'Bucket': custombucket,
@@ -113,6 +123,7 @@ def companyUpload():
                                                 ExpiresIn=expiration)
         except ClientError as e:
             logging.error(e)
+        
 
         if response is None:
             return render_template('CompanyPage.html', company = companyRecord)
